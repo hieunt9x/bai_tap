@@ -3,8 +3,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Bai Tap</title>
-        <link rel="stylesheet" type="text/css" href="../css/reset.css"/>
-        <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+        <link rel="stylesheet" type="text/css" href="css/reset.css"/>
+        <link rel="stylesheet" type="text/css" href="css/style.css"/>
         <!-- Add the slick-theme.css if you want default styling -->
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css"/>
         <!-- Add the slick-theme.css if you want default styling -->
@@ -16,13 +16,13 @@
                 <div class="top">
                     <div class="slider">
                         <div>
-                            <img src="../image/525973077d5eca5.jpg" width="940px" height="344" />
+                            <img src="image/525973077d5eca5.jpg" width="940px" height="344" />
                         </div>
                         <div>
-                            <img src="../image/525973077d5eca5.jpg" width="940px" height="344" />
+                            <img src="image/525973077d5eca5.jpg" width="940px" height="344" />
                         </div>
                         <div>
-                            <img src="../image/525973077d5eca5.jpg" width="940px" height="344" />
+                            <img src="image/525973077d5eca5.jpg" width="940px" height="344" />
                         </div>
                     </div>
                 </div>
@@ -40,22 +40,19 @@
                 <div class="center">
                 	<div class="content" style="margin-right: 20px;">
                         <h1>
-                            Bài tập
+                            
                         </h1>
-                        <div class="text-content">
-                            <ul>
-                                <li>
-                                	<p><a href="trac_nghiem.html">Thêm chủ đề</a></p>
-                                </li>
-                               
-                            </ul>
-                            <div class="clr"></div>
-                        	<h3>Danh sách chủ đề</h3> 
-                            <div class="list-topic">
-	                              
-                            </div>
+                        <div class="ask_content" style="display:none;">
+                        	<h4>Câu <span class="num_of_ask"></span>: <span class="ask_name"></span></h4>
                         </div>
-                        
+                        <div class="reply" style="margin: 20px 15px;">
+                        	
+                        </div>
+                        <div class="show_ask" style="text-align: center;">
+                        	<button class="start" style="display: none;">Bắt đầu</button>
+                            <button class="next" style="display: none;">Tiếp tục</button>
+                            <button class="finish" style="display: none;">Kết thúc</button>
+                        </div>
                         <div class="clr"></div>
                     </div>
                     <div class="menu-left" style="margin-right: 0px;">
@@ -65,19 +62,19 @@
                         <ul class="mp3">
                         	<li style="margin-bottom: 10px; border-bottom: none">
                             	<audio controls style="width:100%">
-                                  <source src="../musics/headshoulderskneestoes.mp3" type="audio/mpeg">
+                                  <source src="musics/headshoulderskneestoes.mp3" type="audio/mpeg">
                                 </audio>
                                 <p>Head shoulders kneestoes</p>
                             </li>
                            	<li style="margin-bottom: 10px; border-bottom: none">
                             	<audio controls style="width:100%">
-                                  <source src="../musics/headshoulderskneestoes.mp3" type="audio/mpeg">
+                                  <source src="musics/headshoulderskneestoes.mp3" type="audio/mpeg">
                                 </audio>
                                 <p>Head shoulders kneestoes</p>
                             </li>
                             <li style="margin-bottom: 10px; border-bottom: none">
                             	<audio controls style="width:100%">
-                                  <source src="../musics/headshoulderskneestoes.mp3" type="audio/mpeg">
+                                  <source src="musics/headshoulderskneestoes.mp3" type="audio/mpeg">
                                 </audio>
                                 <p>Head shoulders kneestoes</p>
                             </li>
@@ -115,17 +112,116 @@
         </div>
         <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
-		<script type="text/javascript" src="../js/script.js"></script>
+		<script type="text/javascript" src="js/script.js"></script>
         <script type="text/javascript">
+			var items = [];
+			var current_key = 0;
+			var current_ask = {};
+			var num_reply_true = 0;
+			
 			request.onsuccess = function( event ) {
 				db = event.target.result;
 				
-			  	get_list_topic();
+				var topic_id = getUrlParameter('id');
+				
+				var topic = db.transaction('topic_trac_nghiem', 'readwrite').objectStore('topic_trac_nghiem').get(topic_id);
+				topic.onsuccess = function (event) {
+					$('.content h1').css('text-transform', 'uppercase').text(event.target.result.name);
+				}
+				
+			  	var objectStore = db.transaction('ask', 'readwrite').objectStore('ask').index('topic_trac_nghiem_id');
+				var list_ask = objectStore.getAll(topic_id);
+				
+				list_ask.onsuccess = function (e) {	
+					items = e.target.result;
+					$('.content h1').text( $('.content h1').text() + ' ( ' + items.length + ' câu )' );
+					$('.start').show();
+				}
 			}
+			
+			$('.start').on('click', function () {
+				current_ask = items[current_key];
+				
+				var list_rep = db.transaction('reply', 'readwrite').objectStore('reply').index('ask_id').getAll(current_ask.id);
+				
+				list_rep.onsuccess = function (e) {
+					var data = e.target.result;
+					console.log(data);
+					
+					$('.reply').html('');
+					$.each(data, function (key, val) {
+						$('.reply').append('<p><input type="radio" value="" name="reply" class="rep" is_true="' + val.is_true + '" />' + val.name + '</p>')
+					});
+					
+					$('button').hide();
+					$('.next').show();
+					
+					if (current_key + 1 == items.length) {
+						check_finish();	
+					}
+				}
+				
+				$('.num_of_ask').text(current_key + 1);
+				$('.ask_name').text(current_ask.name);
+				$('.ask_content').show();
+				$('.start').hide();
+			});
+			
+			$('.next').on('click', function () {
+				check_reply_true();
+				
+				current_key++;
+				current_ask = items[current_key];
+				var list_rep = db.transaction('reply', 'readwrite').objectStore('reply').index('ask_id').getAll(current_ask.id);
+				
+				list_rep.onsuccess = function (e) {
+					var data = e.target.result;
+					console.log(data);
+					$('.reply').html('');
+					
+					$.each(data, function (key, val) {
+						$('.reply').append('<p><input type="radio" value="" name="reply" class="rep" is_true="' + val.is_true + '" />' + val.name + '</p>')
+					});
+					
+					$('button').hide();
+					$('.next').show();
+					
+					if (current_key + 1 == items.length) {
+						check_finish();	
+					}
+				}
+				
+				$('.num_of_ask').text(current_key + 1);
+				$('.ask_name').text(current_ask.name);
+				$('.ask_content').show();
+				$('.start').hide();
+			});
+			
+			$('.finish').on('click', function () {
+				check_reply_true();
+				
+				$('.ask_content').html('');
+				$('.ask_content').hide();
+				$('.reply').css('text-align', 'center').html('<strong>Bạn đã trả lời đúng ' + num_reply_true + '/' + items.length + ' câu</strong>');
+				$(this).text('Quay lại').attr('onclick', "window.location.href='bai_tap.html'");
+			})
 			
             $(".slider").slick({
                 autoplay: true
             });
+			
+			function check_finish() {
+				$('button').hide();
+				$('.finish').show();	
+			}
+			
+			function check_reply_true() {
+				var rep = $('.rep:checked').attr('is_true');
+				
+				if (rep == 1) {
+					num_reply_true++;
+				}
+			}
         </script>
     </body>
 </html>

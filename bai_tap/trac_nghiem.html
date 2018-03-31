@@ -40,22 +40,18 @@
                 <div class="center">
                 	<div class="content" style="margin-right: 20px;">
                         <h1>
-                            Bài tập
+                            Them chủ đề
                         </h1>
                         <div class="text-content">
                             <ul>
-                                <li>
-                                	<p><a href="trac_nghiem.html">Thêm chủ đề</a></p>
+                                <li style="width: 100% !important">
+                                	<p>
+										<input style="width: 50% !important" name="topic" class="topic" value="" placeholder="" />
+                                        <button>Tiếp tục</button>
+                                    </p>
                                 </li>
-                               
                             </ul>
-                            <div class="clr"></div>
-                        	<h3>Danh sách chủ đề</h3> 
-                            <div class="list-topic">
-	                              
-                            </div>
                         </div>
-                        
                         <div class="clr"></div>
                     </div>
                     <div class="menu-left" style="margin-right: 0px;">
@@ -117,15 +113,25 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
 		<script type="text/javascript" src="../js/script.js"></script>
         <script type="text/javascript">
-			request.onsuccess = function( event ) {
-				db = event.target.result;
-				
-			  	get_list_topic();
-			}
-			
             $(".slider").slick({
                 autoplay: true
             });
+			
+			$('button').on('click', function () {
+				var name = $('.topic').val();
+				
+				if (!name) {
+					return false;	
+				}
+				
+				var create = create_topic({
+					name: name	
+				});
+				
+				create.onsuccess = function (event) {
+					window.location.href = 'ask.html?id=' + event.target.result;
+				}
+			});
         </script>
     </body>
 </html>

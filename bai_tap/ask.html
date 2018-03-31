@@ -40,22 +40,41 @@
                 <div class="center">
                 	<div class="content" style="margin-right: 20px;">
                         <h1>
-                            Bài tập
+                            Thêm câu hỏi
                         </h1>
                         <div class="text-content">
                             <ul>
-                                <li>
-                                	<p><a href="trac_nghiem.html">Thêm chủ đề</a></p>
+                                <li style="width: 100% !important">
+                                	<p>
+										Câu hỏi: <input style="width: 50% !important" name="topic" class="ask" placeholder="" />
+                                    </p>
+                                    <p style="margin:10px">
+                                    	Câu trả lời
+                                    </p>
+                                    <p>
+										<input style="width: 50% !important" name="reply" class="reply" data-rep="1" />
+                                        <input type="radio" name="topic" class="rep_true_1" data-rep="1" checked="checked"/>
+                                    </p>
+                                    <p>
+										<input style="width: 50% !important" name="reply" class="reply" data-rep="2" />
+                                        <input type="radio" name="topic" class="rep_true_2" data-rep="2"/>
+                                    </p>
+                                    <p>
+										<input style="width: 50% !important" name="reply" class="reply" data-rep="3" />
+                                        <input type="radio" name="topic" class="rep_true_3" data-rep="3"/>
+                                    </p>
+                                    <p>
+										<input style="width: 50% !important" name="reply" class="reply" data-rep="4" />
+                                        <input type="radio" name="topic" class="rep_true_3" data-rep="4"/>
+                                    </p>
+                                    
+                                    <p  style="margin:10px">
+                                    	<button class="save-and-next">Lưu và thêm câu hỏi mới</button>
+                                        <button class="save">Lưu</button>
+                                    </p>
                                 </li>
-                               
                             </ul>
-                            <div class="clr"></div>
-                        	<h3>Danh sách chủ đề</h3> 
-                            <div class="list-topic">
-	                              
-                            </div>
                         </div>
-                        
                         <div class="clr"></div>
                     </div>
                     <div class="menu-left" style="margin-right: 0px;">
@@ -117,15 +136,89 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
 		<script type="text/javascript" src="../js/script.js"></script>
         <script type="text/javascript">
-			request.onsuccess = function( event ) {
-				db = event.target.result;
-				
-			  	get_list_topic();
-			}
-			
             $(".slider").slick({
                 autoplay: true
             });
+			
+			$('.save').on('click', function () {
+				var name_ask = $('.ask').val();
+				if (!name_ask) {
+					return;
+				}
+				
+				var create = create_ask({
+					topic_trac_nghiem_id: getUrlParameter('id'),
+					name: name_ask
+				});
+				
+				create.onsuccess = function (event) {
+					var ask_id = event.target.result;
+					console.log(event);
+					var reply = [];
+					var reply_el = $('.reply');
+					for (var i = 0; i < reply_el.length; i++) {
+						var rep = $(reply_el[i]).val();
+						var is_true = $('.rep_true_' + parseInt(i + 1)).is(':checked');
+						
+						if (!rep) {
+							rep = 'Câu trả lời không xác định';
+						}
+						
+						reply.push({
+							id: makeId(),
+							name: rep,
+							ask_id: ask_id,
+							is_true: (is_true) ? 1 : 0
+						});
+					}
+					
+					var create = create_rep(reply);
+					
+					setTimeout(function () {
+						window.location.href = 'index.html';
+					}, 500);
+				}
+			});
+			
+			$('.save-and-next').on('click', function () {
+				var name_ask = $('.ask').val();
+				if (!name_ask) {
+					return;
+				}
+				
+				var create = create_ask({
+					topic_trac_nghiem_id: getUrlParameter('id'),
+					name: name_ask
+				});
+				
+				create.onsuccess = function (event) {
+					var ask_id = event.target.result;
+					console.log(event);
+					var reply = [];
+					var reply_el = $('.reply');
+					for (var i = 0; i < reply_el.length; i++) {
+						var rep = $(reply_el[i]).val();
+						var is_true = $('.rep_true_' + parseInt(i + 1)).is(':checked');
+						
+						if (!rep) {
+							rep = 'Câu trả lời không xác định';
+						}
+						
+						reply.push({
+							id: makeId(),
+							name: rep,
+							ask_id: ask_id,
+							is_true: (is_true) ? 1 : 0
+						});
+					}
+					
+					var create = create_rep(reply);
+					
+					setTimeout(function () {
+						location.reload();
+					}, 500);
+				}
+			});
         </script>
     </body>
 </html>
