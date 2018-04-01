@@ -16,13 +16,13 @@
                 <div class="top">
                     <div class="slider">
                         <div>
-                            <img src="image/525973077d5eca5.jpg" width="940px" height="344" />
+                          <img src="image/525973077d5eca5.jpg" width="940px" height="344" />
                         </div>
                         <div>
-                            <img src="image/525973077d5eca5.jpg" width="940px" height="344" />
+                          <img src="image/525973077d5eca5.jpg" width="940px" height="344" />
                         </div>
                         <div>
-                            <img src="image/525973077d5eca5.jpg" width="940px" height="344" />
+                          <img src="image/525973077d5eca5.jpg" width="940px" height="344" />
                         </div>
                     </div>
                 </div>
@@ -33,6 +33,9 @@
                         </li>
                         <li>
                             <a href="lop_1/mon_toan.html">Lop 1</a>
+                        </li>
+                        <li>
+                            <a href="bai_tap.html">Bài tập</a>
                         </li>
                     </ul>
                     <div class="clr"></div>
@@ -124,8 +127,8 @@
 					} 
 					
 					for (var i = 0; i < data.length; i++) {
-						var html = '<li><p>' + parseInt(i + 1) + ') <a href="cau_hoi.html?id=' + data[i].id + '">' + data[i].name + '</a></p></li>';
-						$('.text-content ul').append(html);
+						var html = '<li><p>' + parseInt(i + 1) + ') <a href="cau_hoi.html?id=' + data[i] + '">' + data[i].name + '</a></p></li>';
+$('.text-content ul').append(html);
 					}
 				}
 			}
