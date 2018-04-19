@@ -37,7 +37,7 @@ function get_list_topic() {
 		} 
 		
 		for (var i = 0; i < data.length; i++) {
-			$('.list-topic').append('<a href="" style="margin: 5px 10px; display: block;">'+ parseInt(i + 1) + ') ' + data[i].name + '</a> ');
+			$('.list-topic').append('<p><a href="" style="margin: 5px 10px;">'+ parseInt(i + 1) + ') ' + data[i].name + '</a> | <a onclick="delete_ask(\''+data[i].id + '\')" href="javascript:void(0)"> Xóa </a></p>');
 		}
 	}
 }
@@ -114,3 +114,13 @@ function getUrlParameter(sParam) {
         }
     }
 };
+
+function delete_ask(id) {
+	console.log(id);
+	var objectStore = db.transaction(["topic_trac_nghiem"], "readwrite").objectStore('topic_trac_nghiem');	
+	var objectStoreRequest = objectStore.delete(id);
+	
+	objectStoreRequest.onsuccess = function(event) {
+	  	window.location.reload();
+	};
+}
